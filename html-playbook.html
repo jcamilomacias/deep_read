@@ -1,0 +1,983 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HTML Playbook for Unifier Toolkit</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0a0b0d;
+      --ink: #f3f2ed;
+      --muted: #a9adb4;
+      --dim: #747b86;
+      --line: #2a3039;
+      --panel: #14171c;
+      --panel-2: #191d23;
+      --green: #8bd17c;
+      --teal: #52c7bd;
+      --amber: #f0bc58;
+      --red: #ff746c;
+      --blue: #83aaff;
+      --violet: #c4a1ff;
+      --radius: 8px;
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      line-height: 1.55;
+    }
+
+    a {
+      color: var(--teal);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(230px, 300px) minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    aside {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 26px 22px;
+      border-right: 1px solid var(--line);
+      background: #0d0f12;
+      overflow: auto;
+    }
+
+    .mark {
+      width: 38px;
+      height: 38px;
+      margin-bottom: 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: var(--panel);
+      color: var(--amber);
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .nav-title {
+      margin: 0 0 8px;
+      font-size: 19px;
+      line-height: 1.15;
+    }
+
+    .nav-copy {
+      margin: 0 0 22px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    nav {
+      display: grid;
+      gap: 4px;
+    }
+
+    nav a {
+      display: block;
+      padding: 8px 10px;
+      border-radius: 6px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    nav a:hover {
+      background: var(--panel);
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    main {
+      width: min(1220px, 100%);
+      padding: 56px clamp(20px, 5vw, 76px) 92px;
+    }
+
+    .hero {
+      max-width: 960px;
+      margin-bottom: 48px;
+    }
+
+    .kicker {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 20px;
+      padding: 7px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: var(--panel);
+      font-size: 13px;
+    }
+
+    .kicker span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 920px;
+      font-family: var(--serif);
+      font-size: clamp(44px, 7vw, 92px);
+      line-height: 0.95;
+      letter-spacing: 0;
+    }
+
+    .dek {
+      max-width: 820px;
+      margin: 24px 0 0;
+      color: var(--muted);
+      font-size: clamp(18px, 2.3vw, 24px);
+      line-height: 1.45;
+    }
+
+    section {
+      margin: 62px 0;
+    }
+
+    .section-heading {
+      display: grid;
+      grid-template-columns: 130px minmax(0, 1fr);
+      gap: 24px;
+      align-items: start;
+      margin-bottom: 24px;
+    }
+
+    .section-number {
+      color: var(--dim);
+      font-family: var(--mono);
+      font-size: 13px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(30px, 4vw, 48px);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 20px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 0 0 16px;
+      color: var(--muted);
+    }
+
+    .lead {
+      max-width: 840px;
+      color: #deded8;
+      font-size: 18px;
+    }
+
+    .grid-2,
+    .grid-3,
+    .grid-4 {
+      display: grid;
+      gap: 14px;
+    }
+
+    .grid-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .grid-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .card {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+    }
+
+    .card p:last-child {
+      margin-bottom: 0;
+    }
+
+    .hero-cards {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .hero-card {
+      min-height: 132px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+    }
+
+    .hero-card strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 22px;
+    }
+
+    .hero-card span {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      margin-bottom: 12px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #22262c;
+      color: var(--muted);
+      font-size: 12px;
+      font-family: var(--mono);
+    }
+
+    .chip.green { color: var(--green); }
+    .chip.teal { color: var(--teal); }
+    .chip.amber { color: var(--amber); }
+    .chip.red { color: var(--red); }
+    .chip.blue { color: var(--blue); }
+    .chip.violet { color: var(--violet); }
+
+    .callout {
+      margin: 24px 0;
+      padding: 18px 20px;
+      border-left: 3px solid var(--teal);
+      border-radius: var(--radius);
+      background: var(--panel-2);
+      color: #dde4e2;
+    }
+
+    .callout p:last-child {
+      margin-bottom: 0;
+    }
+
+    .diagram {
+      margin-top: 26px;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel-2);
+      overflow-x: auto;
+    }
+
+    svg {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+
+    .matrix {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+    }
+
+    .matrix th,
+    .matrix td {
+      padding: 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .matrix th {
+      background: #1c2026;
+      color: var(--ink);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    .matrix td {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .matrix tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .chooser {
+      display: grid;
+      grid-template-columns: minmax(220px, 300px) minmax(0, 1fr);
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .option-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .option {
+      appearance: none;
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 12px;
+      background: var(--panel);
+      color: var(--muted);
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .option[aria-pressed="true"] {
+      border-color: var(--teal);
+      color: var(--ink);
+      background: #162322;
+    }
+
+    .play-panel {
+      min-height: 260px;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+    }
+
+    .play-panel ul {
+      margin: 12px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+    }
+
+    .play-panel li {
+      margin-bottom: 8px;
+    }
+
+    code,
+    pre {
+      font-family: var(--mono);
+    }
+
+    code {
+      padding: 2px 5px;
+      border-radius: 4px;
+      color: #dce8e5;
+      background: #191d23;
+    }
+
+    pre {
+      margin: 0;
+      padding: 16px;
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #101216;
+      color: #dce8e5;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .prompt-card {
+      position: relative;
+    }
+
+    .copy {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      appearance: none;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #20242a;
+      color: var(--muted);
+      padding: 8px 10px;
+      font: inherit;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .list li {
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--muted);
+      background: #111317;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 14px;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 42px minmax(0, 1fr);
+      gap: 14px;
+      align-items: start;
+    }
+
+    .badge {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: var(--panel);
+      color: var(--ink);
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+
+    footer {
+      margin-top: 72px;
+      padding-top: 24px;
+      border-top: 1px solid var(--line);
+      color: var(--dim);
+      font-size: 13px;
+    }
+
+    @media (max-width: 960px) {
+      .layout {
+        display: block;
+      }
+
+      aside {
+        position: static;
+        height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      nav {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .hero-cards,
+      .grid-2,
+      .grid-3,
+      .grid-4,
+      .chooser {
+        grid-template-columns: 1fr;
+      }
+
+      .section-heading {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+    }
+
+    @media (max-width: 560px) {
+      main {
+        padding: 36px 16px 70px;
+      }
+
+      nav {
+        grid-template-columns: 1fr;
+      }
+
+      .matrix {
+        display: block;
+        overflow-x: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside>
+      <div class="mark">HTML</div>
+      <h2 class="nav-title">Repo HTML Playbook</h2>
+      <p class="nav-copy">A practical guide for when this repo should use HTML artifacts instead of plain markdown.</p>
+      <nav aria-label="Playbook sections">
+        <a href="#essence">Essence</a>
+        <a href="#decision">Decision Rule</a>
+        <a href="#artifact-types">Artifact Types</a>
+        <a href="#canvas">Canvas Pattern</a>
+        <a href="#lifecycle">Lifecycle</a>
+        <a href="#repo-rules">Repo Rules</a>
+        <a href="#chooser">Artifact Chooser</a>
+        <a href="#prompts">Prompts</a>
+      </nav>
+    </aside>
+
+    <main>
+      <header class="hero">
+        <div class="kicker"><span></span> HTML is not prettier markdown. It is an operating surface.</div>
+        <h1>Use HTML when the reader needs to see, compare, interact, or decide.</h1>
+        <p class="dek">Markdown stays excellent for canonical instructions and small specs. HTML earns its keep when a dense artifact must be read, navigated, reviewed, shared, or used as a temporary decision interface.</p>
+        <div class="hero-cards" aria-label="HTML value summary">
+          <div class="hero-card">
+            <strong>Density</strong>
+            <span>Tables, diagrams, callouts, and spatial layouts beat long prose for complex repo context.</span>
+          </div>
+          <div class="hero-card">
+            <strong>Clarity</strong>
+            <span>Navigation, visual grouping, and color make large agent outputs easier to actually read.</span>
+          </div>
+          <div class="hero-card">
+            <strong>Review</strong>
+            <span>Diffs, risk maps, test matrices, and annotations help fresh reviewers inspect the right thing.</span>
+          </div>
+          <div class="hero-card">
+            <strong>Feedback</strong>
+            <span>Buttons, tabs, filters, and copy prompts turn a static report into a lightweight workbench.</span>
+          </div>
+        </div>
+      </header>
+
+      <section id="essence">
+        <div class="section-heading">
+          <div class="section-number">01 / essence</div>
+          <div>
+            <h2>The reference article's core lesson for this repo.</h2>
+            <p class="lead">Agents are now good enough to produce documents that exceed what markdown can comfortably express. The value is not visual decoration. The value is keeping the human in the loop when the artifact becomes too large or multidimensional for a flat text file.</p>
+          </div>
+        </div>
+        <div class="callout">
+          <p><strong>Repo translation:</strong> use HTML to make complex agent work inspectable. Then distill durable decisions back into the canonical files: `STRATEGY.md`, `CONTEXT.md`, `AGENTS.md`, ADRs, issues, tests, and code.</p>
+        </div>
+        <div class="grid-3">
+          <div class="card">
+            <span class="chip teal">Not decoration</span>
+            <h3>HTML should reveal structure</h3>
+            <p>Use it to show pipelines, alternatives, ownership maps, test matrices, and consequences that prose would bury.</p>
+          </div>
+          <div class="card">
+            <span class="chip amber">Not permanent truth</span>
+            <h3>HTML is usually a reader surface</h3>
+            <p>Durable truth still belongs in maintainable source files. HTML can explain and coordinate, but it should not become a hidden policy store.</p>
+          </div>
+          <div class="card">
+            <span class="chip green">Not only reports</span>
+            <h3>HTML can be a temporary tool</h3>
+            <p>For triage, prioritization, prompt tuning, UI comparison, or BpSpec inspection, a single HTML file can become a purpose-built editor.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="decision">
+        <div class="section-heading">
+          <div class="section-number">02 / rule</div>
+          <div>
+            <h2>Choose HTML when one of four pressures appears.</h2>
+            <p class="lead">Do not make every document an HTML document. Make HTML when the job has visual, comparative, interactive, or review pressure.</p>
+          </div>
+        </div>
+        <div class="diagram" aria-label="Decision diagram">
+          <svg width="1040" height="370" viewBox="0 0 1040 370" role="img" aria-labelledby="decision-title decision-desc">
+            <title id="decision-title">HTML decision diagram</title>
+            <desc id="decision-desc">A diagram mapping artifact pressure to HTML or markdown output choices.</desc>
+            <defs>
+              <marker id="arrow" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+                <path d="M0,0 L0,6 L8,3 z" fill="#747b86"></path>
+              </marker>
+            </defs>
+
+            <rect x="390" y="18" width="260" height="72" rx="8" fill="#162322" stroke="#52c7bd"></rect>
+            <text x="520" y="48" text-anchor="middle" fill="#f3f2ed" font-size="16" font-weight="700">New artifact request</text>
+            <text x="520" y="70" text-anchor="middle" fill="#a9adb4" font-size="12">spec, review, report, map, editor</text>
+
+            <path d="M520 90 V124" stroke="#747b86" stroke-width="2" marker-end="url(#arrow)"></path>
+            <rect x="330" y="126" width="380" height="72" rx="8" fill="#191d23" stroke="#2a3039"></rect>
+            <text x="520" y="156" text-anchor="middle" fill="#f3f2ed" font-size="15" font-weight="700">Does the reader need structure that markdown hides?</text>
+            <text x="520" y="178" text-anchor="middle" fill="#a9adb4" font-size="12">visual, comparative, interactive, or review pressure</text>
+
+            <path d="M330 162 H194" stroke="#747b86" stroke-width="2" marker-end="url(#arrow)"></path>
+            <rect x="24" y="126" width="170" height="72" rx="8" fill="#15171b" stroke="#2a3039"></rect>
+            <text x="109" y="156" text-anchor="middle" fill="#f3f2ed" font-size="15" font-weight="700">No</text>
+            <text x="109" y="178" text-anchor="middle" fill="#a9adb4" font-size="12">write markdown</text>
+
+            <path d="M710 162 H846" stroke="#747b86" stroke-width="2" marker-end="url(#arrow)"></path>
+            <rect x="846" y="126" width="170" height="72" rx="8" fill="#211d13" stroke="#f0bc58"></rect>
+            <text x="931" y="156" text-anchor="middle" fill="#f3f2ed" font-size="15" font-weight="700">Yes</text>
+            <text x="931" y="178" text-anchor="middle" fill="#a9adb4" font-size="12">make HTML</text>
+
+            <path d="M931 198 V230" stroke="#747b86" stroke-width="2" marker-end="url(#arrow)"></path>
+            <rect x="760" y="232" width="342" height="94" rx="8" fill="#14171c" stroke="#2a3039"></rect>
+            <text x="931" y="262" text-anchor="middle" fill="#f3f2ed" font-size="15" font-weight="700">Then distill durable decisions</text>
+            <text x="931" y="286" text-anchor="middle" fill="#a9adb4" font-size="12">AGENTS, STRATEGY, CONTEXT, ADRs, issues, tests, code</text>
+            <text x="931" y="308" text-anchor="middle" fill="#a9adb4" font-size="12">HTML helps decide; source files carry truth</text>
+
+            <path d="M846 160 C690 250, 372 250, 194 162" fill="none" stroke="#747b86" stroke-dasharray="7 7" stroke-width="2"></path>
+            <text x="505" y="246" text-anchor="middle" fill="#a9adb4" font-size="13">If the HTML outcome is just prose, markdown was enough.</text>
+          </svg>
+        </div>
+      </section>
+
+      <section id="artifact-types">
+        <div class="section-heading">
+          <div class="section-number">03 / types</div>
+          <div>
+            <h2>Repo-specific HTML artifact types.</h2>
+            <p class="lead">These are the places HTML can materially improve Unifier Toolkit work without creating documentation rot.</p>
+          </div>
+        </div>
+        <table class="matrix">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Use when</th>
+              <th>Suggested path</th>
+              <th>Canonical truth after use</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Operating explainer</td>
+              <td>Explaining agent workflow, repo strategy, or system shape.</td>
+              <td><code>docs/*-strategy.html</code>, <code>docs/*-playbook.html</code></td>
+              <td><code>AGENTS.md</code>, <code>STRATEGY.md</code>, <code>CONTEXT.md</code></td>
+            </tr>
+            <tr>
+              <td>Implementation plan companion</td>
+              <td>A CE plan needs diagrams, risk maps, flowcharts, or UI mockups.</td>
+              <td><code>docs/plans/&lt;slug&gt;.html</code></td>
+              <td><code>docs/plans/&lt;slug&gt;.md</code>, GitHub issues</td>
+            </tr>
+            <tr>
+              <td>Architecture map</td>
+              <td>Understanding a module requires bouncing across many files or concepts.</td>
+              <td><code>docs/architecture-*.html</code></td>
+              <td>ADRs, <code>CONTEXT.md</code>, module interfaces, tests</td>
+            </tr>
+            <tr>
+              <td>Code review explainer</td>
+              <td>A branch changes important behavior and a plain diff is not enough.</td>
+              <td><code>docs/reviews/&lt;branch&gt;.html</code> if retained</td>
+              <td>PR review, commits, tests, follow-up issues</td>
+            </tr>
+            <tr>
+              <td>Prototype or comparison board</td>
+              <td>Choosing between UI flows, layouts, copy, or interaction models.</td>
+              <td><code>docs/prototypes/&lt;topic&gt;.html</code></td>
+              <td>Accepted design, issues, implementation files</td>
+            </tr>
+            <tr>
+              <td>Throwaway editor</td>
+              <td>Manual text prompts are a bad interface for a structured decision.</td>
+              <td><code>docs/tmp/&lt;topic&gt;-editor.html</code></td>
+              <td>Exported JSON, issue body, code config, or plan update</td>
+            </tr>
+            <tr>
+              <td>Research report</td>
+              <td>Summarizing source docs, git history, test results, or Sandcastle output.</td>
+              <td><code>docs/reports/&lt;topic&gt;.html</code></td>
+              <td>ADRs, issues, solution docs, strategy updates</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="canvas">
+        <div class="section-heading">
+          <div class="section-number">04 / canvas</div>
+          <div>
+            <h2>Every useful HTML artifact should have a job.</h2>
+            <p class="lead">A good HTML artifact is not "a markdown doc rendered in a browser." It is a purpose-built canvas with navigation, visual structure, and an export or next-action path.</p>
+          </div>
+        </div>
+        <div class="grid-4">
+          <div class="card">
+            <span class="chip blue">Orient</span>
+            <h3>First viewport</h3>
+            <p>State what the artifact helps decide or understand. Do not hide the point below decorative sections.</p>
+          </div>
+          <div class="card">
+            <span class="chip teal">Navigate</span>
+            <h3>Stable sections</h3>
+            <p>Use a sidebar or top nav so large artifacts are scannable. Section IDs should be meaningful.</p>
+          </div>
+          <div class="card">
+            <span class="chip amber">Visualize</span>
+            <h3>Maps and matrices</h3>
+            <p>Use SVG, tables, grids, risk maps, timelines, and tabs where prose would create cognitive load.</p>
+          </div>
+          <div class="card">
+            <span class="chip green">Return</span>
+            <h3>Copy or export</h3>
+            <p>Include copy prompts, JSON export, or a clear "distill into source of truth" checklist.</p>
+          </div>
+        </div>
+        <div class="callout">
+          <p><strong>Quality test:</strong> if the reader cannot answer "what should I do next?" after reading the artifact once, the HTML is pretty but not useful.</p>
+        </div>
+      </section>
+
+      <section id="lifecycle">
+        <div class="section-heading">
+          <div class="section-number">05 / lifecycle</div>
+          <div>
+            <h2>HTML artifacts should feed the repo, not become a side universe.</h2>
+            <p class="lead">The playbook is to use HTML for comprehension and decision pressure, then push durable outcomes back into maintainable artifacts.</p>
+          </div>
+        </div>
+        <div class="timeline">
+          <div class="step">
+            <div class="badge">1</div>
+            <div class="card">
+              <h3>Create</h3>
+              <p>Name the decision or comprehension problem. Read the relevant source files. Build only the interface needed for that problem.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="badge">2</div>
+            <div class="card">
+              <h3>Inspect</h3>
+              <p>Use the HTML to compare alternatives, trace flows, review code, or export structured edits.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="badge">3</div>
+            <div class="card">
+              <h3>Decide</h3>
+              <p>Record which interpretation, design, issue ordering, or architecture shape is accepted.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="badge">4</div>
+            <div class="card">
+              <h3>Distill</h3>
+              <p>Move durable truth into <code>AGENTS.md</code>, <code>STRATEGY.md</code>, <code>CONTEXT.md</code>, ADRs, CE plans, issues, tests, or code.</p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="badge">5</div>
+            <div class="card">
+              <h3>Retire or keep</h3>
+              <p>Keep HTML that remains useful as a reader surface. Retire throwaway editors and stale reports once their output has been absorbed.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="repo-rules">
+        <div class="section-heading">
+          <div class="section-number">06 / rules</div>
+          <div>
+            <h2>Repo rules for HTML files.</h2>
+            <p class="lead">These constraints keep HTML useful without making the repository hard to review or maintain.</p>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <span class="chip green">Do</span>
+            <ul class="list">
+              <li>Use self-contained HTML, CSS, and small vanilla JS unless the artifact must run inside the app.</li>
+              <li>Link back to canonical markdown files and code paths that informed the artifact.</li>
+              <li>Use visual structure that reduces reading effort: grids, tables, SVG, tabs, filters, and timelines.</li>
+              <li>Include a clear next-action or export path when the artifact is interactive.</li>
+              <li>Run basic HTML sanity checks for anchors and copy targets before handing off.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <span class="chip red">Avoid</span>
+            <ul class="list">
+              <li>Do not put hidden product rules only in HTML.</li>
+              <li>Do not use HTML for tiny edits, short notes, or simple issue bodies.</li>
+              <li>Do not create a large artifact without naming what decision it supports.</li>
+              <li>Do not preserve throwaway editors after their export has been applied.</li>
+              <li>Do not let HTML reports replace tests, import checks, issue state, or human QA.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="chooser">
+        <div class="section-heading">
+          <div class="section-number">07 / chooser</div>
+          <div>
+            <h2>Pick the artifact shape before asking an agent to build it.</h2>
+            <p class="lead">Use this interactive chooser as the mental model. Select the pressure you feel, then copy the output into the next prompt if useful.</p>
+          </div>
+        </div>
+        <div class="chooser" data-chooser>
+          <div class="option-list" aria-label="Artifact pressure options">
+            <button class="option" aria-pressed="true" data-kind="compare">Compare alternatives</button>
+            <button class="option" aria-pressed="false" data-kind="explain">Explain complex code</button>
+            <button class="option" aria-pressed="false" data-kind="review">Review risky changes</button>
+            <button class="option" aria-pressed="false" data-kind="edit">Edit structured data</button>
+            <button class="option" aria-pressed="false" data-kind="report">Synthesize research</button>
+          </div>
+          <div class="play-panel" id="chooser-panel">
+            <h3>Comparison board</h3>
+            <p>Use when the human needs to choose between approaches, UI flows, architecture options, or issue ordering.</p>
+            <ul>
+              <li>Show each option in a uniform grid.</li>
+              <li>Name the trade-off each option makes.</li>
+              <li>Include a recommendation and why.</li>
+              <li>End with a copyable decision summary.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="prompts">
+        <div class="section-heading">
+          <div class="section-number">08 / prompts</div>
+          <div>
+            <h2>Prompts to create good HTML artifacts.</h2>
+            <p class="lead">These prompts preserve the essence: HTML should make the work easier to inspect and the next action easier to take.</p>
+          </div>
+        </div>
+        <div class="grid-2">
+          <div class="card prompt-card">
+            <button class="copy" data-copy="#prompt-playbook">Copy</button>
+            <h3>General repo artifact</h3>
+            <pre id="prompt-playbook">Create a self-contained HTML artifact for this repo. Use it only where HTML adds clarity beyond markdown: visual hierarchy, diagrams, comparison, interaction, or review. Link to the canonical files that carry durable truth. Include navigation, at least one useful visual structure, and a clear next-action or copyable handoff.</pre>
+          </div>
+          <div class="card prompt-card">
+            <button class="copy" data-copy="#prompt-review">Copy</button>
+            <h3>Code review explainer</h3>
+            <pre id="prompt-review">Create an HTML code review explainer for this branch. Read the diff, linked issue, linked CE plan, tests, and relevant modules. Show the behavior change, risk map, affected interfaces, test coverage, and any review findings. Do not replace the actual review; make it easier for a fresh reviewer to inspect the change.</pre>
+          </div>
+          <div class="card prompt-card">
+            <button class="copy" data-copy="#prompt-plan">Copy</button>
+            <h3>Plan companion</h3>
+            <pre id="prompt-plan">Create an HTML companion to the CE implementation plan. Render the issue graph, module map, test matrix, and open risks. Keep the markdown plan canonical for implementation units; use HTML to make dependencies and trade-offs visible.</pre>
+          </div>
+          <div class="card prompt-card">
+            <button class="copy" data-copy="#prompt-editor">Copy</button>
+            <h3>Throwaway editor</h3>
+            <pre id="prompt-editor">Create a single-file HTML editor for this structured decision. It should let me reorder, tag, filter, or edit the data visually, warn about obvious inconsistencies, and provide a copy button that exports the final result as markdown or JSON for Codex.</pre>
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        This HTML playbook is a reader surface. The durable repo contract lives
+        in <code>AGENTS.md</code>, product direction in <code>STRATEGY.md</code>,
+        domain vocabulary in <code>CONTEXT.md</code>, and implementation work in
+        CE plans, GitHub issues, tests, and code.
+      </footer>
+    </main>
+  </div>
+
+  <script>
+    const playbook = {
+      compare: {
+        title: "Comparison board",
+        body: "Use when the human needs to choose between approaches, UI flows, architecture options, or issue ordering.",
+        items: [
+          "Show each option in a uniform grid.",
+          "Name the trade-off each option makes.",
+          "Include a recommendation and why.",
+          "End with a copyable decision summary."
+        ]
+      },
+      explain: {
+        title: "Code or architecture explainer",
+        body: "Use when a module or behavior is hard to understand from code paths alone.",
+        items: [
+          "Show the module map and data flow.",
+          "Quote short code snippets with annotations.",
+          "Call out invariants and danger zones.",
+          "Link to canonical source files and tests."
+        ]
+      },
+      review: {
+        title: "Risk-focused review surface",
+        body: "Use when a branch has behavioral, architectural, security, or data-safety risk.",
+        items: [
+          "Summarize the intended behavior change.",
+          "Map changed files to risk categories.",
+          "Show test coverage and uncovered edges.",
+          "Separate must-fix findings from advisory notes."
+        ]
+      },
+      edit: {
+        title: "Throwaway structured editor",
+        body: "Use when typing instructions would be slower or less precise than manipulating data directly.",
+        items: [
+          "Keep it single-purpose and local.",
+          "Validate obvious constraints in the UI.",
+          "Export markdown, JSON, or a prompt.",
+          "Delete or archive after the output is applied."
+        ]
+      },
+      report: {
+        title: "Research and synthesis report",
+        body: "Use when the agent reads many sources and the human needs a high-density summary.",
+        items: [
+          "Group findings by decision relevance.",
+          "Visualize timelines, source authority, and uncertainty.",
+          "State what changed after reading the sources.",
+          "Distill durable outcomes into source-of-truth docs."
+        ]
+      }
+    };
+
+    document.querySelectorAll("[data-kind]").forEach((button) => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll("[data-kind]").forEach((item) => {
+          item.setAttribute("aria-pressed", "false");
+        });
+        button.setAttribute("aria-pressed", "true");
+
+        const data = playbook[button.dataset.kind];
+        const panel = document.querySelector("#chooser-panel");
+        panel.innerHTML = [
+          "<h3>" + data.title + "</h3>",
+          "<p>" + data.body + "</p>",
+          "<ul>" + data.items.map((item) => "<li>" + item + "</li>").join("") + "</ul>"
+        ].join("");
+      });
+    });
+
+    document.querySelectorAll("[data-copy]").forEach((button) => {
+      button.addEventListener("click", async () => {
+        const target = document.querySelector(button.getAttribute("data-copy"));
+        if (!target) return;
+        await navigator.clipboard.writeText(target.textContent.trim());
+        const original = button.textContent;
+        button.textContent = "Copied";
+        setTimeout(() => { button.textContent = original; }, 1200);
+      });
+    });
+  </script>
+</body>
+</html>
