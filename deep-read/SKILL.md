@@ -1,11 +1,25 @@
 ---
 name: deep-read
-description: Interactive codebase exploration skill that documents learning in a structured HTML learning ledger at docs/learning-ledger.html. Reads files, directories, or notebooks first, drafts findings in the terminal for user confirmation, then writes to the ledger. Use when the user wants to explore a codebase, trace a data or execution flow, understand a module, or capture insights from a Jupyter notebook experiment.
+description: Codebase exploration skill with three commands — /deep-read explores and documents a module into the learning ledger, /distill captures insights from conversation into the ledger with user control over what lands, and /capture processes tagged notebook cells into the ledger. Use when the user wants to explore code, trace flows, distill conversation insights, or capture notebook experiments.
 ---
 
 # Deep Read
 
-## Quick start
+Three commands, one ledger.
+
+```
+/deep-read @src/auth/
+/distill
+/capture @analysis.ipynb
+```
+
+See [REFERENCE.md](REFERENCE.md) for the HTML ledger structure, slug rules, chip vocabulary, and section templates.
+
+---
+
+## `/deep-read`
+
+### Quick start
 
 ```
 /deep-read @src/auth/
@@ -14,9 +28,9 @@ description: Interactive codebase exploration skill that documents learning in a
 /deep-read "how does the event loop work in this app?"
 ```
 
-## Session workflow
+### Session workflow
 
-### 1. Parse the argument
+#### 1. Parse the argument
 
 Apply these rules in order:
 
@@ -30,7 +44,7 @@ Edge cases:
 - A path with no extension and no trailing `/` — run a quick check (`ls` or `find`) to determine whether it is a file or directory before deciding.
 - Multiple `@` arguments — treat each as a separate file read; combine findings into a single draft under one MODULE entry named after the shared parent path or the concept they collectively represent.
 
-### 2. Read silently
+#### 2. Read silently
 
 Read the target without narrating. Build an understanding of:
 - What this module/file/notebook does and why
@@ -53,7 +67,7 @@ The draft covers the directory as a whole — not file by file. Do not enumerate
 - Code cells with error output → note the error in Open Tasks: `[ ] Cell N raised <ErrorType> — investigate`.
 - The MODULE name is the notebook's top-level heading (first `# Heading` in any markdown cell), or the filename if no heading exists.
 
-### 3. Draft in terminal
+#### 3. Draft in terminal
 
 Print the draft for user review. Do NOT write to the HTML file yet.
 
@@ -81,13 +95,13 @@ For notebooks: Key Findings = experiment observations; Flow Traces = analysis pi
 
 Omit sections that have nothing to say (e.g., no flows in a pure config file).
 
-### 4. Confirm and refine
+#### 4. Confirm and refine
 
 Ask: "Does this look right? Anything to add, correct, or cut?"
 
 Incorporate feedback. Repeat until the user confirms the draft.
 
-### 5. Write to the ledger
+#### 5. Write to the ledger
 
 Target: `./docs/learning-ledger.html`
 
@@ -136,7 +150,7 @@ and skip step 5d.
 
 **Step 5d — Write only after explicit confirmation.** When the user confirms, replace the entire `<section id="module-SLUG">…</section>` block (from opening `<section` tag to closing `</section>`) with the newly merged content. Do not append below the old section. The result must be a single clean section — not two stacked versions. Apply the same empty sub-block omission rule as for new modules.
 
-### 6. Field Notes sweep
+#### 6. Field Notes sweep
 
 Always ask this after step 5 completes — even if the merge was a no-op:
 > "Anything to add to Field Notes? Any Python concepts, architectural patterns, or library behavior you want to document from this session?"
@@ -172,7 +186,7 @@ Chip class by category:
 
 Cards are appended as the last children inside `<div class="grid-3" id="field-notes-grid">` — never outside it.
 
-### 7. Log the session
+#### 7. Log the session
 
 **Step 7a — Determine session number.** Read `<div class="timeline" id="session-log-timeline">` in the ledger. Find the highest badge number among existing `<div class="badge">N</div>` entries. N for this entry = highest + 1. If the timeline is empty (only the empty-state placeholder), N = 1. Remove the empty-state placeholder before inserting the first entry.
 
@@ -195,4 +209,12 @@ After inserting, confirm no unclosed tags were introduced.
 
 ---
 
-See [REFERENCE.md](REFERENCE.md) for full HTML structure, section templates, and CSS variables.
+## `/distill`
+
+> _Stub — not yet implemented. See issue 004._
+
+---
+
+## `/capture`
+
+> _Stub — not yet implemented. See issue 005._
