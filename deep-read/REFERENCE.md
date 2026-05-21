@@ -69,6 +69,64 @@ docs/learning-ledger.html
 </section>
 ```
 
+---
+
+## Custom chip sections
+
+The standard sections — Key Findings, Flow Traces, Open Tasks — are defaults, not constraints. Add a custom section when a module has a category of information that does not fit any of them.
+
+**When to add a custom section:**
+- The content has a distinct shape that would be awkward inside Key Findings or Open Tasks
+- A reader would scan directly for this type of information (e.g. "what are the gotchas?", "what env vars does this touch?")
+- There are at least two items — a single orphaned fact goes in Key Findings
+
+**When NOT to add a custom section:**
+- The content fits naturally into Key Findings (general non-obvious behaviors), Flow Traces (execution paths), or Open Tasks (follow-ups)
+- There is only one item to show
+
+**Custom section card template** — same `<div class="card">` structure, choose a chip color that fits the tone:
+
+| Section type | Chip class | Color | When to use |
+|---|---|---|---|
+| `Gotchas` | `chip amber` | amber | Footguns, edge cases, surprising failures |
+| `Dependencies` | `chip blue` | blue | External services, packages, env vars this module depends on |
+| `Configuration Surface` | `chip teal` | teal | Feature flags, settings, env vars this module reads or exposes |
+| `Performance Notes` | `chip red` | red | Measured bottlenecks, N+1 queries, known slow paths |
+| `Data Contracts` | `chip violet` | violet | Schemas, field invariants, serialization rules |
+
+Examples in HTML:
+
+```html
+<!-- Gotchas card -->
+<div class="card">
+  <span class="chip amber">Gotchas</span>
+  <ul class="list">
+    <li>Passing an empty list silently skips all rows — no error raised.</li>
+    <li>The retry count resets on process restart, not per-request.</li>
+  </ul>
+</div>
+
+<!-- Dependencies card -->
+<div class="card">
+  <span class="chip blue">Dependencies</span>
+  <ul class="list">
+    <li><code>REDIS_URL</code> env var — required at startup, no fallback.</li>
+    <li><code>stripe</code> SDK — pinned to 4.x; 5.x changed the webhook signature format.</li>
+  </ul>
+</div>
+
+<!-- Performance Notes card -->
+<div class="card">
+  <span class="chip red">Performance Notes</span>
+  <ul class="list">
+    <li>Full table scan on <code>events</code> — no index on <code>user_id</code> as of 2024-11.</li>
+    <li>Each call to <code>resolve_links()</code> issues one DB query per item (N+1).</li>
+  </ul>
+</div>
+```
+
+---
+
 **Slug rules** — apply in order:
 1. Strip trailing `/` and file extension (`.py`, `.ipynb`, `.ts`, `.js`, etc.)
 2. Replace underscores and spaces with hyphens
