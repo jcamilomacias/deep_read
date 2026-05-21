@@ -6,10 +6,12 @@ The ledger accumulates knowledge across sessions: module maps, distilled insight
 
 ## Install
 
-Copy the `deep-read/` folder into your Claude Code skills directory:
+Each command needs its own skill directory. Copy all three:
 
 ```bash
 cp -r deep-read ~/.claude/skills/deep-read
+cp -r distill   ~/.claude/skills/distill
+cp -r capture   ~/.claude/skills/capture
 ```
 
 All three commands are immediately available in any Claude Code session.
@@ -111,10 +113,14 @@ deep_read/
 ├── README.md
 ├── html-playbook.html        ← visual style reference
 ├── client_brief.md           ← original design brief
-├── deep-read/                ← skill source (install to ~/.claude/skills/)
-│   ├── SKILL.md              ← three-command workflow
+├── deep-read/                ← /deep-read skill (install to ~/.claude/skills/deep-read)
+│   ├── SKILL.md              ← /deep-read command
 │   ├── REFERENCE.md          ← HTML templates, slug rules, chip vocabulary
 │   └── scaffold.html         ← first-run ledger template
+├── distill/                  ← /distill skill (install to ~/.claude/skills/distill)
+│   └── SKILL.md              ← /distill command
+├── capture/                  ← /capture skill (install to ~/.claude/skills/capture)
+│   └── SKILL.md              ← /capture command
 ├── ralph/                    ← AFK agent runner
 │   ├── prompt.md             ← agent instructions
 │   ├── once.sh               ← single iteration (no Docker)
