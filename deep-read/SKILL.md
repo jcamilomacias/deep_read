@@ -42,7 +42,7 @@ Apply these rules in order:
 
 Edge cases:
 - A path with no extension and no trailing `/` — run a quick check (`ls` or `find`) to determine whether it is a file or directory before deciding.
-- Multiple `@` arguments — treat each as a separate file read; combine findings into a single draft under one MODULE entry named after the shared parent path or the concept they collectively represent.
+- Multiple `@` arguments — treat each as a separate file read; combine findings into a single entry named after the shared parent path or the concept they collectively represent.
 
 #### 2. Read silently
 
@@ -58,54 +58,26 @@ List the directory contents first. Then read in this priority order:
 2. Files whose name matches the directory name
 3. The largest remaining files by line count (cap at 5 files total for large directories)
 
-The draft covers the directory as a whole — not file by file. Do not enumerate every file in Key Findings.
+The section covers the directory as a whole — not file by file. Do not enumerate every file in Key Findings.
 
 **Notebook read rules:**
-- Markdown cells → read as background context. Do not quote them verbatim in the draft.
+- Markdown cells → read as background context. Do not quote them verbatim.
 - Code cells with outputs → extract the conceptual insight from the output. Do not dump raw `print()` results or tensor values.
 - Code cells with no output → read the code itself; treat as implementation detail unless it encodes a key design decision.
 - Code cells with error output → note the error in Open Tasks: `[ ] Cell N raised <ErrorType> — investigate`.
 - The MODULE name is the notebook's top-level heading (first `# Heading` in any markdown cell), or the filename if no heading exists.
 
-#### 3. Draft in terminal
+#### 3. Write to the ledger
 
-Print the draft for user review. Do NOT write to the HTML file yet.
-
-Use this exact format:
-
-```
-MODULE: <name or path>
-
-OVERVIEW
-<one paragraph — what it does and why it exists>
-
-KEY FINDINGS
-• <insight, invariant, or non-obvious behavior>
-• <dependency worth noting>
-• <anything that would surprise a first-time reader>
-
-FLOW TRACES
-<FlowName>: <entry point> → <step> → <step> → <exit/output>
-
-OPEN TASKS
-[ ] <follow-up to investigate — include file:line if known>
-```
-
-For notebooks: Key Findings = experiment observations; Flow Traces = analysis pipeline steps.
-
-Omit sections that have nothing to say (e.g., no flows in a pure config file).
-
-#### 4. Confirm and refine
-
-Ask: "Does this look right? Anything to add, correct, or cut?"
-
-Incorporate feedback. Repeat until the user confirms the draft.
-
-#### 5. Write to the ledger
+Write immediately — no terminal draft, no confirmation prompt for new modules.
 
 Target: `./docs/learning-ledger.html`
 
 Create `docs/` and the file if they don't exist.
+
+**Tone:** Write conversationally — a knowledgeable friend explaining the code, not formal API documentation. The Overview says what this code does and why it exists, in language a teammate would use. Key Findings name what is surprising, non-obvious, or load-bearing — not a catalogue of every class and method.
+
+**Chip vocabulary is open-ended.** Key Findings, Flow Traces, and Open Tasks are defaults, not constraints. Add custom chip sections when the module has a category of information that doesn't fit the defaults — "Gotchas", "Dependencies", "Configuration Surface", "Performance Notes", or anything else warranted. Pick a chip color that fits the tone: amber for warnings, blue for external things, violet for patterns. Omit any section that has nothing to say.
 
 **First run** — copy `scaffold.html` from this skill directory to `./docs/learning-ledger.html` (create `docs/` if needed), then replace `{{PROJECT}}` in the `<title>` with the project name. See [REFERENCE.md](REFERENCE.md) for details.
 
@@ -123,11 +95,11 @@ After writing, confirm the file opens in a browser without errors (check for unc
 
 **Existing module** — four steps, all required:
 
-**Step 5a — Detect.** Before any write, search the ledger for `<section id="module-SLUG">`. If found, this is an existing module. If not found, treat as a new module (see above).
+**Step 3a — Detect.** Before any write, search the ledger for `<section id="module-SLUG">`. If found, this is an existing module. If not found, treat as a new module (see above).
 
-**Step 5b — Read existing.** Extract the current content of the existing section: the Overview paragraph, each Key Finding bullet, each Flow Trace, and each Open Task. Do this by reading the HTML — not from memory.
+**Step 3b — Read existing.** Extract the current content of the existing section: the Overview paragraph, each Key Finding bullet, each Flow Trace, and each Open Task. Do this by reading the HTML — not from memory.
 
-**Step 5c — Propose.** Compare the new draft (from step 3) against the existing section sub-block by sub-block. Then show a merge proposal in this format:
+**Step 3c — Propose.** Compare the new read (from step 2) against the existing section sub-block by sub-block. Then show a merge proposal in this format:
 
 ```
 MERGE PROPOSAL for <module name>:
@@ -142,57 +114,21 @@ Open Tasks:  [+N new]  [no removals]
 OK to apply?
 ```
 
-If the new draft is identical to the existing content, show:
+If the new read is identical to the existing content, show:
 ```
 MERGE PROPOSAL for <module name>: no changes — section is already current. Nothing to write.
 ```
-and skip step 5d.
+and skip step 3d.
 
-**Step 5d — Write only after explicit confirmation.** When the user confirms, replace the entire `<section id="module-SLUG">…</section>` block (from opening `<section` tag to closing `</section>`) with the newly merged content. Do not append below the old section. The result must be a single clean section — not two stacked versions. Apply the same empty sub-block omission rule as for new modules.
+**Step 3d — Write only after explicit confirmation.** When the user confirms, replace the entire `<section id="module-SLUG">…</section>` block (from opening `<section` tag to closing `</section>`) with the newly merged content. Do not append below the old section. The result must be a single clean section — not two stacked versions. Apply the same empty sub-block omission rule as for new modules.
 
-#### 6. Field Notes sweep
+#### 4. Log the session
 
-Always ask this after step 5 completes — even if the merge was a no-op:
-> "Anything to add to Field Notes? Any Python concepts, architectural patterns, or library behavior you want to document from this session?"
+**Step 4a — Determine session number.** Read `<div class="timeline" id="session-log-timeline">` in the ledger. Find the highest badge number among existing `<div class="badge">N</div>` entries. N for this entry = highest + 1. If the timeline is empty (only the empty-state placeholder), N = 1. Remove the empty-state placeholder before inserting the first entry.
 
-**If the user declines** — proceed to step 7. Write nothing.
+**Step 4b — Build the entry.** Use today's date (`YYYY-MM-DD`). The summary must name what was specifically explored — not generic boilerplate. Bad: "Explored a module." Good: "Traced the chooser interaction and copy-button flows in html-playbook.html." The Touched list links to every module slug written or merged in this session (collected from step 3 and 3d).
 
-**If the user provides entries** — collect all of them first, then write:
-
-For each entry, ask:
-- Name (short concept title)
-- Explanation (2–4 sentences)
-- Category: `Language` / `Pattern` / `Library` / `Other`
-
-Then write one card per entry inside `<div class="grid-3" id="field-notes-grid">`:
-
-```html
-<div class="card">
-  <span class="chip CHIP-CLASS">CATEGORY</span>
-  <h3>Name</h3>
-  <p>Explanation.</p>
-</div>
-```
-
-Chip class by category:
-| Category | Chip class     |
-|----------|----------------|
-| Language | `chip green`   |
-| Pattern  | `chip violet`  |
-| Library  | `chip blue`    |
-| Other    | `chip amber`   |
-
-**First card only**: before inserting, remove the `<div class="empty-state">…</div>` placeholder inside `#field-notes-grid`. Subsequent cards just append.
-
-Cards are appended as the last children inside `<div class="grid-3" id="field-notes-grid">` — never outside it.
-
-#### 7. Log the session
-
-**Step 7a — Determine session number.** Read `<div class="timeline" id="session-log-timeline">` in the ledger. Find the highest badge number among existing `<div class="badge">N</div>` entries. N for this entry = highest + 1. If the timeline is empty (only the empty-state placeholder), N = 1. Remove the empty-state placeholder before inserting the first entry.
-
-**Step 7b — Build the entry.** Use today's date (`YYYY-MM-DD`). The summary must name what was specifically explored — not generic boilerplate. Bad: "Explored a module." Good: "Traced the chooser interaction and copy-button flows in html-playbook.html." The Touched list links to every module slug written or merged in this session (collect these from steps 5 and 5d).
-
-**Step 7c — Prepend.** Insert the new entry as the **first child** inside `<div class="timeline" id="session-log-timeline">` — not appended at the bottom. Use the HTML template from REFERENCE.md:
+**Step 4c — Prepend.** Insert the new entry as the **first child** inside `<div class="timeline" id="session-log-timeline">` — not appended at the bottom. Use the HTML template from REFERENCE.md:
 
 ```html
 <div class="step">
