@@ -319,6 +319,14 @@
         </div>
         <div class="timeline" id="session-log-timeline">
           <div class="step">
+            <div class="badge">2</div>
+            <div class="card">
+              <h3>2026-05-21</h3>
+              <p>Designed and built three-command skill redesign (/deep-read, /distill, /capture); distilled Ralph AFK agent pattern to Field Notes.</p>
+              <p>Touched: <a href="#field-notes">Field Notes</a></p>
+            </div>
+          </div>
+          <div class="step">
             <div class="badge">1</div>
             <div class="card">
               <h3>2026-05-20</h3>
@@ -410,7 +418,11 @@
           </div>
         </div>
         <div class="grid-3" id="field-notes-grid">
-          <div class="empty-state">No field notes yet. Added at end of each <code>/deep-read</code> session.</div>
+          <div class="card">
+            <span class="chip violet">Pattern</span>
+            <h3>Ralph AFK Agent Loop</h3>
+            <p>Reads <code>docs/issues/*.md</code>, picks the next AFK task, implements it via <code>claude --print --permission-mode acceptEdits</code>, commits, moves the issue file to <code>done/</code>, and repeats. Exits cleanly when the agent outputs <code>&lt;promise&gt;NO MORE TASKS&lt;/promise&gt;</code>. Correctness for Markdown skill projects is verified by inspection — not automated tests.</p>
+          </div>
         </div>
       </section>
 
