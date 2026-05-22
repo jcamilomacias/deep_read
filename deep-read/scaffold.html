@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Learning Ledger — {{PROJECT}}</title>
+  <title>{{TITLE}}</title>
   <style>
     :root {
       color-scheme: dark;
@@ -145,7 +145,7 @@
       margin-bottom: 24px;
     }
 
-    .section-number { color: var(--dim); font-family: var(--mono); font-size: 13px; }
+    .section-number { color: var(--dim); font-family: var(--mono); font-size: 13px; padding-top: 6px; }
 
     h2 { margin: 0; font-size: clamp(30px, 4vw, 48px); line-height: 1.05; }
     h3 { margin: 0 0 10px; font-size: 20px; line-height: 1.2; }
@@ -155,10 +155,11 @@
 
     .lead { max-width: 840px; color: #deded8; font-size: 18px; }
 
-    /* ── Grid & Cards ── */
-    .grid-2, .grid-3 { display: grid; gap: 14px; }
+    /* ── Grids & Cards ── */
+    .grid-2, .grid-3, .grid-4 { display: grid; gap: 14px; }
     .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 
     .card {
       padding: 18px;
@@ -166,6 +167,26 @@
       border-radius: var(--radius);
       background: var(--panel);
     }
+
+    .card p:last-child { margin-bottom: 0; }
+
+    .hero-cards {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .hero-card {
+      min-height: 132px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+    }
+
+    .hero-card strong { display: block; margin-bottom: 8px; font-size: 22px; }
+    .hero-card span { color: var(--muted); font-size: 14px; }
 
     /* ── Chips ── */
     .chip {
@@ -186,6 +207,129 @@
     .chip.red    { color: var(--red); }
     .chip.blue   { color: var(--blue); }
     .chip.violet { color: var(--violet); }
+
+    /* ── Callout ── */
+    .callout {
+      margin: 24px 0;
+      padding: 18px 20px;
+      border-left: 3px solid var(--teal);
+      border-radius: var(--radius);
+      background: var(--panel-2);
+      color: #dde4e2;
+    }
+
+    .callout p:last-child { margin-bottom: 0; }
+
+    /* ── Diagram ── */
+    .diagram {
+      margin-top: 26px;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel-2);
+      overflow-x: auto;
+    }
+
+    svg { display: block; max-width: 100%; height: auto; }
+
+    /* ── Matrix table ── */
+    .matrix {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+    }
+
+    .matrix th, .matrix td {
+      padding: 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .matrix th {
+      background: #1c2026;
+      color: var(--ink);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0;
+    }
+
+    .matrix td { color: var(--muted); font-size: 14px; }
+    .matrix tr:last-child td { border-bottom: 0; }
+
+    /* ── Chooser (interactive option panel) ── */
+    .chooser {
+      display: grid;
+      grid-template-columns: minmax(220px, 300px) minmax(0, 1fr);
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .option-list { display: grid; gap: 8px; }
+
+    .option {
+      appearance: none;
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 12px;
+      background: var(--panel);
+      color: var(--muted);
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .option[aria-pressed="true"] { border-color: var(--teal); color: var(--ink); background: #162322; }
+
+    .play-panel {
+      min-height: 260px;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+    }
+
+    .play-panel ul { margin: 12px 0 0; padding-left: 18px; color: var(--muted); }
+    .play-panel li { margin-bottom: 8px; }
+
+    /* ── Code ── */
+    code, pre { font-family: var(--mono); }
+
+    code { padding: 2px 5px; border-radius: 4px; color: #dce8e5; background: #191d23; }
+
+    pre {
+      margin: 0 0 18px;
+      padding: 16px;
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #101216;
+      color: #dce8e5;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* ── Prompt card with copy button ── */
+    .prompt-card { position: relative; }
+
+    .copy {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      appearance: none;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #20242a;
+      color: var(--muted);
+      padding: 8px 10px;
+      font: inherit;
+      font-size: 13px;
+      cursor: pointer;
+    }
 
     /* ── List ── */
     .list {
@@ -227,25 +371,20 @@
       font-size: 12px;
     }
 
-    /* ── Code ── */
-    code, pre { font-family: var(--mono); }
-
-    code {
-      padding: 2px 5px;
-      border-radius: 4px;
-      color: #dce8e5;
-      background: #191d23;
-    }
-
-    /* ── Empty state ── */
-    .empty-state {
-      padding: 32px;
+    /* ── Source questions (hidden by default, expand for context) ── */
+    .source-q {
+      margin-top: 20px;
+      padding: 10px 14px;
       border: 1px dashed var(--line);
       border-radius: var(--radius);
       color: var(--dim);
-      font-size: 14px;
-      text-align: center;
+      font-size: 13px;
     }
+
+    .source-q summary { cursor: pointer; user-select: none; color: var(--dim); }
+    .source-q summary:hover { color: var(--muted); }
+    .source-q ul { margin: 10px 0 0; padding-left: 18px; color: var(--dim); }
+    .source-q li { margin-bottom: 5px; line-height: 1.5; }
 
     /* ── Footer ── */
     footer {
@@ -259,107 +398,53 @@
     /* ── Responsive ── */
     @media (max-width: 960px) {
       .layout { display: block; }
-      aside {
-        position: static;
-        height: auto;
-        border-right: 0;
-        border-bottom: 1px solid var(--line);
-      }
+      aside { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
       nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .hero-cards, .grid-2, .grid-3, .grid-4, .chooser { grid-template-columns: 1fr; }
       .section-heading { grid-template-columns: 1fr; gap: 8px; }
     }
 
     @media (max-width: 560px) {
       main { padding: 36px 16px 70px; }
       nav { grid-template-columns: 1fr; }
+      .matrix { display: block; overflow-x: auto; }
     }
   </style>
 </head>
 <body>
   <div class="layout">
 
-    <!-- SIDEBAR NAV
-         When adding a new module section, append an <a> inside the
-         .nav-modules container below. Example:
-           <a href="#module-auth">auth</a>
-    -->
     <aside>
-      <div class="mark">LL</div>
-      <h2 class="nav-title">Learning Ledger</h2>
-      <p class="nav-copy">Codebase exploration log. Updated by <code>/deep-read</code>.</p>
-      <nav aria-label="Ledger sections">
-        <a href="#session-log">Session Log</a>
-        <a href="#module-map">Module Map</a>
-        <div class="nav-group">Modules</div>
-        <!-- MODULE NAV LINKS GO HERE -->
-        <a href="#field-notes">Field Notes</a>
+      <div class="mark">{{MARK}}</div>
+      <h2 class="nav-title">{{NAV_TITLE}}</h2>
+      <p class="nav-copy">{{NAV_COPY}}</p>
+      <nav aria-label="Document sections">
+        <!-- NAV LINKS GO HERE -->
       </nav>
     </aside>
 
     <main>
-      <header class="hero">
-        <div class="kicker"><span></span> Living document — updated by /deep-read</div>
-        <h1>Learning Ledger</h1>
-        <p class="dek">A structured record of codebase exploration: module maps, flow traces, open questions, and personal concept notes accumulated over time.</p>
-      </header>
+      <!-- CONTENT GOES HERE -->
 
-      <!-- SESSION LOG
-           Prepend new <div class="step"> entries inside .timeline.
-           Increment the badge number. Newest session goes first.
-      -->
-      <section id="session-log">
-        <div class="section-heading">
-          <div class="section-number">session-log</div>
-          <div>
-            <h2>Session Log</h2>
-            <p class="lead">Chronological record of exploration sessions. Each entry links to the modules touched.</p>
-          </div>
-        </div>
-        <div class="timeline" id="session-log-timeline">
-          <div class="empty-state">No sessions yet. Run <code>/deep-read @&lt;file-or-dir&gt;</code> to start.</div>
-        </div>
-      </section>
-
-      <!-- MODULE MAP
-           Append new <section id="module-SLUG"> blocks after this section.
-           Each module section has: Overview, Key Findings, Flow Traces, Open Tasks.
-           See REFERENCE.md for the full module section template.
-      -->
-      <section id="module-map">
-        <div class="section-heading">
-          <div class="section-number">module-map</div>
-          <div>
-            <h2>Module Map</h2>
-            <p class="lead">One section per module or topic explored. Each section accumulates knowledge across sessions via merge.</p>
-          </div>
-        </div>
-        <!-- MODULE SECTIONS GO HERE -->
-      </section>
-
-      <!-- FIELD NOTES
-           Append new <div class="card"> entries inside #field-notes-grid.
-           Remove the .empty-state div when the first card is added.
-           Chip colors: Language=green, Pattern=violet, Library=blue, Other=amber
-      -->
-      <section id="field-notes">
-        <div class="section-heading">
-          <div class="section-number">field-notes</div>
-          <div>
-            <h2>Field Notes</h2>
-            <p class="lead">Personal concept notes: Python language features, architectural patterns, and library behavior encountered during exploration.</p>
-          </div>
-        </div>
-        <div class="grid-3" id="field-notes-grid">
-          <div class="empty-state">No field notes yet. Added at end of each <code>/deep-read</code> session.</div>
-        </div>
-      </section>
-
-      <footer>
-        This ledger is a living document updated by <code>/deep-read</code>. It is a reader surface — open tasks and decisions should be distilled back into source files, issues, and documentation.
-      </footer>
+      <footer>{{FOOTER}}</footer>
     </main>
 
   </div>
+
+  <script>
+    /* Copy button pattern — wire up any .copy button pointing to a target element:
+       <button class="copy" data-copy="#target-id">Copy</button>
+       Only include this script block if the document uses copy buttons. */
+    document.querySelectorAll("[data-copy]").forEach((button) => {
+      button.addEventListener("click", async () => {
+        const target = document.querySelector(button.getAttribute("data-copy"));
+        if (!target) return;
+        await navigator.clipboard.writeText(target.textContent.trim());
+        const original = button.textContent;
+        button.textContent = "Copied";
+        setTimeout(() => { button.textContent = original; }, 1200);
+      });
+    });
+  </script>
 </body>
 </html>

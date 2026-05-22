@@ -12,11 +12,11 @@ Scan a notebook for `# CAPTURE` tagged cells, write each to the learning ledger,
 /capture @notebooks/experiment.ipynb
 ```
 
-See [REFERENCE.md](~/.claude/skills/deep-read/REFERENCE.md) for the HTML ledger structure, slug rules, chip vocabulary, and section templates.
+See [REFERENCE.md](~/.claude/skills/deep-read/REFERENCE.md) for available HTML components. Use `html-playbook.html` in the project root as your visual reference.
 
 ---
 
-### Session workflow
+### Workflow
 
 #### 1. Parse the argument
 
@@ -34,47 +34,32 @@ Read the notebook. Scan every cell for a line containing `# CAPTURE` (case-sensi
 
 Collect all matching cells in the order they appear in the notebook.
 
-If no cells contain `# CAPTURE`: output "Nothing to capture in `<path>` — no `# CAPTURE` cells found." Make no changes to the ledger or the notebook. Stop here.
+If no cells contain `# CAPTURE`: output `Nothing to capture in <path> — no # CAPTURE cells found.` Make no changes. Stop here.
 
-#### 3. Route and write each tagged cell
+#### 3. Write each tagged cell to the ledger
 
 Process each tagged cell in order.
 
-**Step 3a — Strip the tag.** Remove the `# CAPTURE` line from the cell source. If `# CAPTURE` appears as an inline comment (e.g. `x = 1  # CAPTURE`), remove only the comment portion and keep the rest of the line. Keep all other cell content unchanged. This stripped version is what gets written to the ledger.
+**Step 3a — Strip the tag.** Remove the `# CAPTURE` line from the cell source. If `# CAPTURE` appears as an inline comment (e.g. `x = 1  # CAPTURE`), remove only the comment portion and keep the rest of the line. Keep all other content unchanged. This stripped version is what gets written.
 
-**Step 3b — Infer routing.** Decide where this cell belongs:
-- **Module section** — if the cell imports from, calls into, or clearly demonstrates behavior belonging to a specific module identifiable by path or class name.
-- **Field Notes** — if the cell demonstrates a general concept, language feature, or pattern not tied to a specific module.
+**Step 3b — Decide the section.** Determine which section this cell belongs in:
+- If the cell clearly relates to a specific module or component: find or create a section for that topic.
+- Otherwise: create or update a general concept or experiments section appropriate to the cell's content.
 
-Infer the module slug using the same slug rules as `/deep-read` (see REFERENCE.md).
+**Step 3c — Write.** In `./docs/learning-ledger.html`:
+- If a matching section exists: append the cell content. Use the same visual approach already established in that section — code block + explanation prose, or adapt to whatever fits best.
+- If no matching section exists: create a new section whose structure fits the cell's content. Use `html-playbook.html` as your visual reference for available components. No template — invent the structure that serves the content.
 
-**Step 3c — Write to the ledger.** The ledger is at `./docs/learning-ledger.html`.
-
-For a **module section** entry:
-- If the section (`<section id="module-SLUG">`) exists, append a new `<li>` under Key Findings. If the module has a natural "Experiments" category that doesn't fit Key Findings, add a custom chip section instead.
-- If the section does not exist, create a full section: write an Overview paragraph inferred from the cell's context, then add the cell as a Key Findings entry.
-
-For a **Field Notes** entry:
-- Append a new card to `<div class="grid-3">` in the Field Notes section.
-- Use the Field Notes card template from REFERENCE.md.
-- Pick the most specific applicable chip: Language, Pattern, Library, or Other.
-
-Each entry written to the ledger (whether module or field notes) contains two parts:
-1. The stripped cell source in a `<pre><code class="language-python">…</code></pre>` block.
-2. A `<p>` paragraph: conversational explanation of what the cell demonstrates and why a teammate should care. Same tone as `/deep-read` — not API docs, not a description of what the code does line by line.
+Include a `<details class="source-q">` noting this came from the notebook, collapsed by default.
 
 #### 4. Edit the notebook
 
-After all ledger writes are complete, edit the notebook file: remove the `# CAPTURE` line (or inline comment portion) from every tagged cell. Write the notebook back to disk in valid JSON.
+After all ledger writes are complete, remove the `# CAPTURE` line (or inline comment portion) from every tagged cell. Write the notebook back to disk as valid JSON.
 
-Do not modify untagged cells. Do not reformat, reorder, or re-number cells. The only change is removal of `# CAPTURE` text.
+Do not modify untagged cells. Do not reformat, reorder, or re-number cells.
 
 #### 5. Log the session
 
-Only append a session log entry if at least one cell was written to the ledger.
+Only if at least one cell was written.
 
-Follow the same logging steps as `/deep-read` step 4:
-- Determine N (highest existing badge + 1, or 1 if empty).
-- Summary names the notebook file and how many cells were captured. Example: "Captured 3 cells from `notebooks/experiment.ipynb` — routed 2 to `auth` module, 1 to Field Notes."
-- Touched list links to every section written (module slugs and/or Field Notes).
-- Prepend as the first child of `<div class="timeline" id="session-log-timeline">`.
+If the ledger has a session log, add an entry: date, specific summary of what was captured and where it landed (e.g. "Captured 3 cells from `notebooks/experiment.ipynb` — auth token behavior and pandas merge gotcha"), links to sections touched.

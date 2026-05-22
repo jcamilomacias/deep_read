@@ -1,118 +1,78 @@
 ---
 name: distill
-description: Surface insights from the current conversation and propose them as a numbered list for the deep-read learning ledger. You keep or drop each one — nothing lands in the ledger without approval. Use when the user wants to capture what was learned in a conversation into docs/learning-ledger.html.
+description: Read the current conversation and update the living documentation ledger. Sections are created or updated dynamically from the conversation's actual content — not reinterpreted through a template. User questions are preserved hidden inside each section; the document reads as clean technical documentation.
 ---
 
 # /distill
 
-Run any time during a session to surface insights from the conversation and route them into the learning ledger with explicit control over what lands.
+Reads the conversation since the last `/distill` invocation (or session start) and updates `./docs/learning-ledger.html` with documentation sections that emerge from the conversation's content.
 
-See [REFERENCE.md](~/.claude/skills/deep-read/REFERENCE.md) for the HTML ledger structure, slug rules, chip vocabulary, and section templates.
+See [REFERENCE.md](~/.claude/skills/deep-read/REFERENCE.md) for HTML patterns and the section template.
 
 ---
 
-### Session workflow
+### Workflow
 
-#### 1. Scan the conversation for candidate insights
+#### 1. Read the conversation window
 
-Look back through the conversation from the last `/distill` invocation (or session start for the first run) to now. Extract distinct, non-trivial insights — things a teammate would want to find in the ledger later.
+Scan from the last `/distill` call (or session start) to now. Identify **topics** — cohesive subjects that came up: a code flow, a concept explained, a gotcha discovered, a decision made, a pattern demonstrated, a question answered in depth.
 
-**What counts as an insight:**
-- A non-obvious behavior or constraint that was discovered
-- A design decision and its reason
-- A data or execution flow that was traced
-- A gotcha, edge case, or failure mode that came up
-- A general language or library pattern that was demonstrated or explained
+A topic is distillable if it produced a real explanation — something a teammate would want to find and read later. Skip meta-conversation, unanswered questions, and trivial exchanges.
 
-**What does not count:**
-- Questions or hypotheses that were not confirmed
-- Trivial facts derivable by reading the code directly
-- Boilerplate or setup steps
+If nothing distillable exists: output `Nothing to distill from this conversation window.` Stop.
 
-For each insight, infer its routing:
-- **Module section** — if the insight is specifically about a module identifiable by path or class name. Derive the slug using the slug rules in REFERENCE.md. Assign the chip type that fits best: Key Findings, Flow Traces, Open Tasks, or a custom type (Gotchas, Dependencies, Configuration Surface, Performance Notes, Data Contracts).
-- **Field Notes** — if the insight is a general concept, language feature, or pattern not tied to a specific module. Assign the chip type: Language, Pattern, Library, or Other.
+#### 2. Plan the distill
 
-If no insights are found, output: "No distillable insights found in this conversation window." Stop. Do not write anything.
+Read `./docs/learning-ledger.html` to check which sections already exist.
 
-#### 2. Present the candidate list
+For each topic, decide:
+- **[new]** — no matching section exists yet; will create one.
+- **[update → Section Title]** — a matching section exists; will add or revise content.
 
-Output all candidates as a numbered list. Each item on one line:
+Show the plan before writing anything:
 
 ```
-Distill candidates:
+Distill plan:
 
-1. [→ auth / Key Findings] Token refresh happens on every request — there is no background refresh loop.
-2. [→ auth / Gotchas] Passing an empty `scopes` list silently grants all scopes instead of raising.
-3. [→ services-payment / Flow Traces] Payment flow: `initiate()` → `stripe.charge()` → webhook confirmation → `mark_paid()`.
-4. [→ field-notes / Language] Python's `functools.lru_cache` does not respect TTL — entries live forever until the process restarts.
-5. [→ auth / Open Tasks] [ ] Investigate why `refresh_token()` is called on GET requests — `src/auth/tokens.py:88`
+1. [new] "Token Refresh Flow"  —  src/auth/tokens.py
+   Will cover: middleware triggers refresh synchronously, 15-min TTL, concurrent-refresh race condition
 
-Keep which? (e.g. `keep 1 3 5`, `keep all`, `keep none`)
+2. [update → Auth Module]  "Scope validation gotcha"
+   Will add: empty scopes list silently grants all scopes instead of raising
+
+3. [new] "Python lru_cache — No TTL"
+   Will cover: cache entries live for the process lifetime, no built-in expiry mechanism
+
+Proceed? (yes / edit / skip N)
 ```
 
-Stop here. Wait for the user's response before doing anything else.
+Wait for the user's response before writing anything. Options:
+- `yes` — proceed as shown.
+- `edit` — apply corrections the user describes (reassign, rename, drop, merge items).
+- `skip N` — drop item N from the plan.
 
-#### 3. Parse the user's selection
+#### 3. Write
 
-- `keep all` → accept every candidate.
-- `keep none` → nothing is written. Stop. No session log entry.
-- `keep N [M P …]` → keep only the numbered items listed. Discard the rest.
-- Any other response → ask the user to clarify using the format above.
+Read `html-playbook.html` in the project root as your visual reference — it shows every CSS component available (cards, grids, timelines, callouts, matrix tables, chips, diagrams, choosers). Use whichever of those components fit the content. There is no prescribed structure.
 
-#### 4. Confirm routing targets
+For each approved topic:
 
-Group the kept items by target. Show one line per group, then wait:
+**[new] section:**
+Invent the section structure that best serves the content. Ask: what does a teammate need to *see* here — a prose explanation, a flow diagram, a comparison table, a code walkthrough, a warning callout? Build that. Add a nav link in `<aside>` pointing to the section's `id`.
 
-```
-Routing:
-  • Items 1, 2, 5 → `auth` module
-  • Item 3 → `services-payment` module
-  • Item 4 → Field Notes
+Every section should end with a `<details class="source-q">` containing the user questions from the conversation that prompted it (collapsed by default — this is reference context, not primary content).
 
-OK? (or correct with e.g. "item 3 → auth")
-```
+**[update] section:**
+Read the existing section. Add what's new — extend the prose, add a callout for the new gotcha, insert a table if the new content is comparative, append to the question list in `.source-q`. Don't duplicate what's already there.
 
-Wait for confirmation or correction before writing.
+**Writing style:**
+- Write as a knowledgeable teammate explaining what they found — conversational, not API docs.
+- Use prose paragraphs as the base. Reach for visual components (callouts, grids, timelines) when they make the content clearer, not for decoration.
+- Include code snippets when they illustrate a non-obvious point — short, focused excerpts, not full file dumps.
+- Capture the *why* and the *gotcha*, not just the *what*.
 
-Apply any corrections: reassign the named item to the specified target. Re-derive the slug if the user provides a path (using slug rules from REFERENCE.md).
+#### 4. Log the session
 
-#### 5. Deduplicate, handle Overview updates, and write
+Only if at least one section was written or updated.
 
-Read `./docs/learning-ledger.html`.
-
-**Deduplication:** For each kept item, compare its insight text against existing content in the target section. If a semantically equivalent entry already exists (same fact, even if differently worded), skip that item silently. Do not write it.
-
-**Overview update detection:** If any kept item describes what a module fundamentally does (i.e., it would replace or significantly extend the Overview paragraph), treat it as an Overview update candidate. Show it separately before writing:
-
-```
-Overview update for `auth`:
-  Old: "Handles token issuance and validation for all API requests…"
-  New: "Manages token issuance, refresh, and scope enforcement for all API requests…"
-
-Replace? (yes/no)
-```
-
-Wait for the user's answer. Only overwrite the Overview paragraph on "yes." Skip the update on "no" — discard the item entirely.
-
-**Write the remaining approved items:**
-
-For each non-Overview, non-duplicate item:
-
-1. **Existing module section** — append the item as a new `<li>` under the matching chip section card. If the chip section (e.g. Gotchas) does not yet exist in the module, add the card using the custom chip section template from REFERENCE.md. Place it after the last existing card in the `<div class="grid-2">` or as a new card after it.
-
-2. **Module not yet in the ledger** — create the full section: nav link + `<section>` block using the module section template from REFERENCE.md. Write an Overview paragraph inferred from the conversation context. Collect all approved items for that module into appropriate chip section cards. Omit any chip section that has no items. Follow the same two-write sequence as `/deep-read` step 3 (nav link first, then section).
-
-3. **Field Notes item** — append a new card to `<div class="grid-3">` in the Field Notes section using the Field Notes card template from REFERENCE.md.
-
-After all writes, confirm no unclosed tags were introduced by scanning the written blocks.
-
-#### 6. Log the session
-
-Only append a session log entry if at least one item was written to the ledger.
-
-Follow the same steps as `/deep-read` step 4:
-- Determine N (highest existing badge + 1, or 1 if the timeline is empty).
-- Summary names what was distilled. Example: "Distilled 3 insights into `auth` and 1 to Field Notes."
-- Touched list links to every section written (module slugs and/or Field Notes).
-- Prepend as the first child of `<div class="timeline" id="session-log-timeline">`.
+If the ledger has a session log (a timeline section tracking exploration history), add an entry: date, one-line summary of what was distilled, and links to every section touched. If no session log exists yet, decide whether adding one would be useful given the document's current shape — it is not required.
